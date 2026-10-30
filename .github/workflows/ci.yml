@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+jobs:
+  backend:
+    name: Backend (Windows)
+    runs-on: windows-latest
+    # Dummy keys: the suite never calls a provider, but client construction
+    # expects the variables to exist. No real credentials are used.
+    env:
+      DEEPSEEK_API_KEY: test-key
+      APINEX_API_KEY: test-key
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: pip install -r backend/requirements.txt pytest
+      - name: Run tests
+        working-directory: backend
+        run: python -m pytest tests/ -q
+
+  frontend:
+    name: Frontend
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Install dependencies
+        working-directory: frontend
+        run: npm ci
+      - name: Type check
+        working-directory: frontend
+        run: npx tsc -b
+      - name: Tests
+        working-directory: frontend
+        run: npm test

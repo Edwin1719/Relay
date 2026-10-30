@@ -1,0 +1,49 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+*.egg
+.venv/
+venv/
+env/
+.pytest_cache/
+
+# Node
+node_modules/
+dist/
+.vite/
+*.tsbuildinfo
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+*.tmp
+*.log
+
+# Environment
+.env
+.env.local
+
+# Agent runtime state (local, never project source)
+.mini-coding-agent/
+.kodama/
+.kodama_token
+KODAMA_MEMORY.md
+
+# MCP config (may contain env var references)
+mcp_config.json
+
+# pywhatkit recrea este archivo al usarse (llegó a contener un teléfono)
+PyWhatKit_DB.txt
+
+# Copia de exhibición abandonada (~160 MB), no forma parte del proyecto
+kodama-showcase/
+
+# Capturas temporales de la herramienta de navegador
+.playwright-mcp/
