@@ -25,6 +25,7 @@ dist/
 Thumbs.db
 *.tmp
 *.log
+build_log.txt
 
 # Environment
 .env

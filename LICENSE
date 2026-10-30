@@ -1,12 +1,6 @@
-﻿MIT License
+MIT License
 
 Copyright (c) 2026 Relay
-
-Relay's own code is released under the MIT License below. Files listed in
-THIRD_PARTY_NOTICES.md contain code derived from third-party work and remain
-under their original licenses — the vendored agent core
-(backend/agent_core.py) is under the Apache License, Version 2.0, included in
-LICENSES/Apache-2.0.txt.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
