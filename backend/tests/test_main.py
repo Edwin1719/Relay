@@ -294,6 +294,21 @@ def client(monkeypatch, mock_agent, mock_mcp_mgr, tmp_path):
     # ── Import main AFTER patches ──────────────────────────────
     import main
 
+    # Bind the mocks on ``main`` explicitly: if another module imported it
+    # during collection, its module-level ``from agent_stream import ...``
+    # names point at the real implementations and the patches above never
+    # reach them (that made the chat tests hit the network and flake).
+    _mock_events = [
+        {"type": "start", "data": {"max_steps": 6}},
+        {"type": "model_response", "data": {"raw": "<final>ok</final>"}},
+        {"type": "final", "data": {"content": "Mock final answer"}},
+    ]
+    monkeypatch.setattr(main, "create_agent", lambda **kw: mock_agent)
+    monkeypatch.setattr(
+        main, "ask_stream",
+        lambda agent, msg, images=None: list(_mock_events),
+    )
+
     # Reset module-level globals so the lifespan starts clean
     main.agent = None
     main.current_session_id = None
@@ -377,9 +392,15 @@ class TestChat:
             main._chat_lock.release()
 
     def test_chat_releases_lock_when_done(self, client):
+        import time
         import main
         resp = client.post("/api/chat", json={"message": "Hello"})
         assert resp.status_code == 200
+        # The lock is released by the worker thread; on a slow runner that
+        # happens a few milliseconds after the response is consumed.
+        deadline = time.monotonic() + 5
+        while main._chat_lock.locked() and time.monotonic() < deadline:
+            time.sleep(0.05)
         assert main._chat_lock.locked() is False
 
     def test_workspace_set_rejected_while_chatting(self, client, tmp_path):
